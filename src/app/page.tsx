@@ -283,10 +283,6 @@ export default function BaseShop() {
             {/* Hero Section */}
             <div className="text-center py-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl text-white shadow-xl">
               <div className="max-w-3xl mx-auto">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Sparkles className="w-6 h-6" />
-                  <span className="text-lg font-medium">Demo Store</span>
-                </div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
                   Experience the Future of E-commerce
                 </h2>
