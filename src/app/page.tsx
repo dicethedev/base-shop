@@ -12,6 +12,7 @@ import { getProducts } from "@/lib/products";
 import { Wallet, CheckCircle, Store, ArrowLeft, Sparkles } from "lucide-react";
 import { CheckoutFlow } from "@/components/checkout-flow";
 import { OnchainWallet } from "@/components/onchain-wallet";
+import { BASE_URL } from "@/lib/config";
 
 interface DataRequest {
   email: boolean;
@@ -51,8 +52,7 @@ export default function BaseShop() {
 
   // Function to get callback URL
   function getCallbackURL() {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
-    return `${baseUrl}/api/data-validation`;
+    return `${BASE_URL}/api/data-validation`;
   }
 
   // Handle response data when sendCalls completes
