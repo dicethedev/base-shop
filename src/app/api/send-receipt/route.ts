@@ -2,10 +2,22 @@ import type { NextRequest } from "next/server";
 import { Resend } from "resend";
 import { ReceiptEmail } from "@/components/emails/receipt-email";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
+    // Check if API key is available
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.error("RESEND_API_KEY is not configured");
+      return Response.json(
+        {
+          error: "Email service not configured. Please contact support.",
+        },
+        { status: 500 }
+      );
+    }
+    // Initialize Resend only when we have the API key
+    const resend = new Resend(apiKey);
+
     const {
       email,
       name,
