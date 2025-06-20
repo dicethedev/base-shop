@@ -3,6 +3,7 @@
 import type React from "react";
 import { createContext, useContext, useReducer, type ReactNode } from "react";
 import type { Product } from "@/lib/products";
+import { toast } from "sonner";
 
 export interface CartItem {
   product: Product;
@@ -49,7 +50,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       }
 
       const total = newItems.reduce(
-        (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
+        (sum, item) =>
+          sum + Number.parseFloat(item.product.price) * item.quantity,
         0
       );
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -62,7 +64,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         (item) => item.product.id !== action.payload
       );
       const total = newItems.reduce(
-        (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
+        (sum, item) =>
+          sum + Number.parseFloat(item.product.price) * item.quantity,
         0
       );
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -80,7 +83,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         item.product.id === productId ? { ...item, quantity } : item
       );
       const total = newItems.reduce(
-        (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
+        (sum, item) =>
+          sum + Number.parseFloat(item.product.price) * item.quantity,
         0
       );
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);

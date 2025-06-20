@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShoppingCart, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
+import { useToast } from "@/hooks/use-toast";
 
 interface CartSidebarProps {
   onCheckout: () => void;
@@ -24,12 +25,21 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
   const { state, dispatch } = useCart();
   const [open, setOpen] = useState<boolean>(false);
 
+  const { showInfo } = useToast();
+
   const updateQuantity = (productId: string, quantity: number) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { productId, quantity } });
   };
 
   const removeItem = (productId: string) => {
+    const item = state.items.find((item) => item.product.id === productId);
     dispatch({ type: "REMOVE_ITEM", payload: productId });
+    if (item) {
+      showInfo(
+        "Removed from cart",
+        `${item.product.title} has been removed from your cart.`
+      );
+    }
   };
 
   const handleCheckout = () => {

@@ -2,17 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
-import { useConnect, useSendCalls, useAccount, useDisconnect } from "wagmi";
-import { Button } from "@/components/ui/button";
+import { useSendCalls, useAccount } from "wagmi";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product-card";
 import { CartSidebar } from "@/components/cart-sidebar";
+import { OnchainWallet } from "@/components/onchain-wallet";
 import { useCart } from "@/contexts/cart-context";
 import { getProducts } from "@/lib/products";
-import { Wallet, CheckCircle, Store, ArrowLeft, Sparkles } from "lucide-react";
+import { sendReceiptEmail } from "@/lib/order-utils";
+import { Store, Sparkles, ArrowLeft } from "lucide-react";
 import { CheckoutFlow } from "@/components/checkout-flow";
-import { OnchainWallet } from "@/components/onchain-wallet";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { BASE_URL } from "@/lib/config";
+import { useToast } from "@/hooks/use-toast";
 
 interface DataRequest {
   email: boolean;
@@ -43,10 +46,10 @@ export default function BaseShop() {
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   const { sendCalls, data, error, isPending } = useSendCalls();
-  const { connect, connectors } = useConnect();
   const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
   const { state: cartState, dispatch: cartDispatch } = useCart();
+
+  const { showSuccess, showError } = useToast();
 
   const products = getProducts();
 
@@ -86,6 +89,42 @@ export default function BaseShop() {
       }
 
       setResult(newResult);
+
+      // Send receipt email if we have customer email
+      if (newResult.email && cartState.items.length > 0) {
+        sendReceiptEmail({
+          email: newResult.email,
+          name: newResult.name,
+          walletAddress: newResult.walletAddress,
+          items: cartState.items,
+          total: cartState.total,
+          address: newResult.address,
+          phone: newResult.phone,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showSuccess(
+                "Receipt sent!",
+                "A confirmation email has been sent to your inbox."
+              );
+            } else {
+              console.error("Failed to send receipt email:", data.error);
+              showError(
+                "Email failed",
+                "Receipt email could not be sent, but your order was successful."
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Receipt email error:", error);
+            showError(
+              "Email failed",
+              "Receipt email could not be sent, but your order was successful."
+            );
+          });
+      }
+
       cartDispatch({ type: "CLEAR_CART" });
     } else if (data && !data.capabilities?.dataCallback) {
       setResult({
@@ -93,7 +132,15 @@ export default function BaseShop() {
         error: "Invalid response - no profile data received",
       });
     }
-  }, [data, address, cartDispatch]);
+  }, [
+    data,
+    address,
+    cartDispatch,
+    cartState.items,
+    cartState.total,
+    showError,
+    showSuccess,
+  ]);
 
   // Handle errors
   useEffect(() => {
@@ -161,8 +208,6 @@ export default function BaseShop() {
       }));
 
       sendCalls({
-        connector: connectors[0],
-        account: null,
         calls,
         chainId: 84532, // Base Sepolia
         capabilities: {
@@ -229,7 +274,6 @@ export default function BaseShop() {
                 </Button>
               </div>
             )} */}
-
             <OnchainWallet />
           </div>
         </header>
@@ -239,6 +283,10 @@ export default function BaseShop() {
             {/* Hero Section */}
             <div className="text-center py-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl text-white shadow-xl">
               <div className="max-w-3xl mx-auto">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Sparkles className="w-6 h-6" />
+                  <span className="text-lg font-medium">Demo Store</span>
+                </div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
                   Experience the Future of E-commerce
                 </h2>
@@ -279,13 +327,12 @@ export default function BaseShop() {
             </div>
           </div>
         ) : (
-          /* Checkout Flow */
           <div className="max-w-3xl mx-auto space-y-8">
             <div className="flex items-center gap-4 mb-8">
               <Button
                 variant="outline"
                 onClick={() => setShowCheckout(false)}
-                className="transition-all duration-200 hover:scale-105 cursor-pointer"
+                className="transition-all duration-200 hover:scale-105"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Shop
@@ -307,7 +354,10 @@ export default function BaseShop() {
               isPending={isPending}
               isConnected={isConnected}
               onCheckout={handleCheckout}
-              onConnectWallet={() => connect({ connector: connectors[0] })}
+              onConnectWallet={() => {
+                // OnchainKit handles connection automatically
+                console.log("Connect wallet triggered");
+              }}
               onContinueShopping={() => {
                 setShowCheckout(false);
                 setResult(null);

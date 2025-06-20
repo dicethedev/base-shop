@@ -12,6 +12,7 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -20,8 +21,14 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { dispatch } = useCart();
 
+  const { showSuccess } = useToast();
+
   const handleAddToCart = () => {
     dispatch({ type: "ADD_ITEM", payload: product });
+    showSuccess(
+      "Added to cart!",
+      `${product.title} has been added to your cart.`
+    );
   };
 
   return (
