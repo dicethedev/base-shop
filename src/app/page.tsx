@@ -227,24 +227,25 @@ export default function BaseShop() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <header className="flex items-center justify-between mb-12">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Store className="w-6 h-6 text-white" />
+      <div className="container mx-auto px-4 py-4 sm:py-8 max-w-7xl">
+        {/* Mobile-Responsive Header */}
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-8 sm:mb-12">
+          {/* Logo and Title Section */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Store className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
                 Base Shop
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-tight">
                 Smart Wallet checkout on Base
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
             <CartSidebar onCheckout={() => setShowCheckout(true)} />
 
             {/* {!isConnected ? (
@@ -301,21 +302,24 @@ export default function BaseShop() {
 
             {/* Products Grid */}
             <div>
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Featured Products
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm sm:text-base">
                     Discover our collection of Base-themed items
                   </p>
                 </div>
-                <Badge variant="outline" className="text-sm">
+                <Badge
+                  variant="outline"
+                  className="text-sm self-start sm:self-auto"
+                >
                   {products.length} Products
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -323,8 +327,8 @@ export default function BaseShop() {
             </div>
           </div>
         ) : (
-          <div className="max-w-3xl mx-auto space-y-8">
-            <div className="flex items-center gap-4 mb-8">
+          <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               <Button
                 variant="outline"
                 onClick={() => setShowCheckout(false)}
@@ -334,8 +338,10 @@ export default function BaseShop() {
                 Back to Shop
               </Button>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Checkout</h2>
-                <p className="text-gray-600">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Checkout
+                </h2>
+                <p className="text-gray-600 text-sm sm:text-base">
                   Complete your purchase with Smart Wallet
                 </p>
               </div>
